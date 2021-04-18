@@ -1,0 +1,133 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block mainId %}profile{% endblock %}
+
+{% block logguedNavbar %}
+    <span class="left"><a href="javascript:window.history.back();"><i class="fa fa-chevron-left material-fa" aria-hidden="true"></i></a></span>
+{% endblock %}
+
+{% block title %}Profile{% endblock %}
+{%  block mainContent %}
+    <div class="section" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <h1 id="name"></h1>
+                </div>
+
+            <div class="col s12" id="avatar">
+                    <span class="commitment-avatar">
+                        <img class="flag" src="/images/flags-iso/flat/32/#native_country#.png" />
+                    </span>
+            </div>
+            </div>
+            <div class="row">
+                <div class="col s12 motto hide"><i class="fa fa-quote-left" aria-hidden="true"></i><span id="motto-text"></span><i class="fa fa-quote-right" aria-hidden="true"></i></div>
+
+            </div>
+
+    </div>
+    </div>
+    <div class="section">
+        <div class="container">
+
+            <div class="row">
+                <div class="col s12" id="main-details">
+                    <span id="gender">
+                        <span id="gender_1" class="hide">Boy</span>
+                        <span id="gender_2" class="hide">Girl</span>
+                    </span> from <span id="nativeCountry"></span>
+                </div>
+                <div class="col s12" id="creationDate">Joined the comeeters <time class="timeago" ></time></div>
+            </div>
+        </div>
+    </div>
+    <div class="section" id="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col s6 hide" id="eventsParticipatedCount">Events joined<br /><span class="profile-event-stat"></span></div>
+                <div class="col s6 hide" id="eventsRealizedCount">Events organised<br /><span class="profile-event-stat"></span></div>
+            </div>
+            </div>
+    </div>
+    <div class="section no-pad-bot">
+        <div class="container">
+            <div class="row" id="encountersContainer">
+                <div class="col s12">
+                    <span id="encounters-events-list">
+                        <span id="encountersCount"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hide" id="encounters-events-template">
+        <div class="row">
+            <a class="detail-link" href="">
+                <div class="col s12 m9"><p><span class="title"></span></p></div>
+                <div class="col s12 m3"><span class="date"></span>
+                    <span class="time"></span><br />
+                    <span class="time"><time class="timeago"></time></span></div>
+            </a>
+
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container" id="vueapp" >
+            <hr >
+            <div class="row">
+                <div class="col s12"><b>Languages</b> {% if app.user.id  == userId %}<a href="{{ path('user_languages') }}">Edit</a>{% endif %}</div>
+            </div>
+            <div v-cloak>
+                <div v-if="!loading" class="v-cloak--hidden">
+                    <div v-if="userLanguages.length === 0">
+                        <td>No languages configurated yet.</td>
+                    </div>
+                    <div v-for='userLanguage in userLanguages' v-else>
+                        <div class="row">
+                            <div class="col s6">${ userLanguage.language.name }</div>
+                            <div class="col s6">${ language_level[userLanguage.level] }</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="loading">
+                Loading languages...
+            </div>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <div class="container" id="vueapp" >
+            <hr >
+            <div class="row">
+                <div class="col s12"><b>Discord Name</b> {% if app.user.id  == userId %}<a href="{{ path('discord') }}">Edit</a>{% endif %}</div>
+            </div>
+            <div id="discordName">
+                Loading...
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+
+    {{ parent() }}
+    <script>
+        var isCurrentUserProfile = {% if app.user.id  == userId %} true {% else %} false {% endif %};
+        var PROFILE_USER_ID = {{ userId }};
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    {% javascripts
+    'js/profile.js'
+    'js/countries.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}

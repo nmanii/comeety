@@ -1,0 +1,119 @@
+{% extends 'main_layout.html.twig' %}
+{% set pageType = "events" %}
+
+{% block mainId %}list-events{% endblock %}
+
+{% block title %} Let's meet in Paris{% endblock %}
+
+{% block logguedNavbar %}
+    <span class="left">Paris</span>
+    <span class="right"><a href="#community_invite_module" class="modal-trigger top-nav-invite-icon"><i class="fa fa-user-plus material-fa fa-fw" aria-hidden="true"></i></a> <a href="{{ path('create_event') }}"><i class="fa fa-calendar-plus-o material-fa fa-fw" aria-hidden="true"></i></a></span>
+{% endblock %}
+
+{%  block mainContent %}
+    <div class="container">
+
+        <div class="row hide" id="appNotificationEnablerBlock">
+            <div class="col m12 l12">
+                Activate notifications in this browser? <span class="btn" id="appNotificationEnabler">Configure</span>
+            </div>
+        </div>
+
+        <div class="section no-pad-bot row">
+            <h1 class="hide-on-med-and-down">Events in <span class="orange-text">Paris</span></h1>
+                <div class="col s12 l8" id="event-list-block">
+                    <span >Loading events ...</span><div class="loader"></div>
+                </div>
+                <div class="col s12 l4">
+                    <div class="suggestion-block-title">You have a great idea for our next activity?<br />
+                        Create your event and share the fun :)
+                    </div>
+                    <div class="row">
+                        <div class="col s12 suggestion">
+                            <a href="{{ path('create_event') }}?title=Meet%20for%20language%20or%20culture%20exchange&description=Let%E2%80%99s%20meet%20to%20practice%20English%2C%20French%20or%20any%20other%20languages%0A%0AWe%20will%20share%20and%20talk%20about%20our%20interests.%0A%0ADon%E2%80%99t%20be%20shy%20and%20join%20me%20for%20some%20knowledge%20exchange.">
+                                <i class="fa fa-comments-o fa-fw fa-2x" aria-hidden="true"></i>
+                                Language and culture exchange</a>
+                        </div>
+                        <div class="col s12 suggestion">
+                            <a href="{{ path('create_event') }}?title=Have%20fun%20%40%20home&description=Lets%20meet%20at%20my%20place.%0A%0AI%20will%20add%20more%20info%20about%20the%20meeting%20point%20later%20in%20the%20private%20comments%20so%20only%20the%20registered%20member%20will%20access%20it.%0A%0ASee%20you">
+                                <i class="fa fa-home fa-fw fa-2x" aria-hidden="true"></i>
+                                @ home</a>
+                        </div>
+                        <div class="col s12 suggestion">
+                            <a href="{{ path('create_event') }}?title=Have%20a%20drink%20or%20grab%20a%20bite&description=What%20is%20your%20favourite%20drink%20%3F%0AWith%20or%20without%20alcohol%2C%20coffee%20or%20tea%2C...%0A%0AOr%20maybe%20you%20feel%20a%20little%20hungry%3F%0A%0ALet%E2%80%99s%20find%20out%20and%20join%20us%20to%20share%20a%20nice%20moment%20in%20a%20friendly%20atmosphere.">
+                                <i class="fa fa-cutlery fa-fw fa-2x" aria-hidden="true"></i>
+                                Food & drinks</a>
+                        </div>
+                        <div class="col s12 suggestion">
+                            <a href="{{ path('create_event') }}?title=Lets%20meet%20and&description=I%20plan%20to%20%E2%80%A6...........%0A%0AJoin%20me%20and%20let%27s%20have%20fun.%0A%0AIs%20it%20free%20%3F%20..%E2%80%A6...........%0A%0ASee%20you%20there">
+                                <i class="fa fa-pencil-square-o fa-fw fa-2x" aria-hidden="true"></i>
+                                Create your own</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12 suggestion">
+                            <a href="{{ path('show_events') }}#past">
+                                <i class="fa fa-folder-open-o fa-fw fa-2x" aria-hidden="true"></i>
+                                Get inspiration from past events</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="events-by-date-template">
+            <div class="row" id="date-template">
+                <div class="col s12 date-block">
+                    <div class="date header"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class=" hide" id="events-template">
+            <div class="row "></div>
+        </div>
+
+    <div class="hide events-empty-block" id="events-empty-template">
+        <div><img src="/images/no_event_found.png"></div>
+        <p>Hey, there are no events planned in the hood for the next few days. </p>
+        <hr />
+        <p>Be the one to gather the crew!</p>
+        <p><a class="btn" href="{{ path('create_event') }}">Create an event</a></p>
+
+    </div>
+
+{% verbatim %}
+        <div class=" hide" id="event-template">
+            <div class="col s12 list-block-event {{alternateClass}}">
+                <div class="card">
+                    <a class="detail-link">
+                        <div class="card-content">
+                            <a class="block-link detail-link" href="{{detail-link}}"></a>
+                            <p><a class="title detail-link" href="{{detail-link}}">{{title}}</a></p>
+                            <span class="time"><i class="fa fa-fw fa fa-clock-o" aria-hidden="true"></i> {{time}}</span><span class="event-category-icon">{{{categoryIcon}}}</span>
+                            <p class="address"><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{{placeName}}}{{address}}</p>
+                            <div class="divider"></div>
+                            <span class="count "><i class="fa fa-users fa-fw" aria-hidden="true"></i> {{count}}</span>
+                            <span class="right">By
+                            <span class="commitment-avatar commitment-avatar-{{commitmentScore}}">
+                                <img class="flag" src="/images/flags-iso/flat/32/{{nativeCountry}}.png" />
+                                </span>
+                                <span class="organizer user-name">{{organiserName}}</span></span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+     {% endverbatim %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/list_events.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

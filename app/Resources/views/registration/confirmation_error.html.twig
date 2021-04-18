@@ -1,0 +1,20 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block title %}An error occured.{% endblock %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel error">
+                    {% if 404 == errorCode %}
+                        User does not exist
+                    {% elseif 422 == errorCode %}
+                        The link is no more valid
+                    {% else %}
+                        An error occured while validating your account. Please contact the support team.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

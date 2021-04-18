@@ -1,0 +1,43 @@
+{% extends 'main_layout.html.twig' %}
+
+{% set navClass ="hide" %}
+
+{% block mainId %}about_us{% endblock %}
+{% block title %}About us{% endblock %}
+{% block mainContent %}
+    <div class="container">
+        <div class="section">
+            <h1 >About us</h1>
+            <div class="row">
+                <div class="col s12">
+                    <h2 class="title">What is comeety</h2>
+                    <p>Comeety is a platform that makes it easy to meet and share experiences in small 'comeeties'.</p>
+                    <h2 class="title">Why stick to small comeeties?</h2>
+                    <p>It’s much easier to build real relationships in small groups. </p>
+                    <p>Keeping the comeeties small also makes it easier for everyone, even the most introvert individuals, to get involved by sharing real conversations and experiences, and for leaders to organize and manage events.</p>
+                    <p>Want to get together at someone’s home for drinks or a meal? It's easier in a small comeeting, right? ;)</p>
+                    <h2 class="title">Who uses comeety? Who will I meet?</h2>
+                    <p>The quick answer is: the comeeters :)</p>
+                    <p>The comeeters are members of the community: open-minded people who love to explore and discover new things, new places and new experiences.</p>
+                    <p>Comeeters share 3 main values:</p>
+                    <ul>
+                        <li>- To stay open-minded and tolerant, willing to explore and consider new ideas.</li>
+                        <li>- To be committed. Keeping your word and coming to the event once you have registered. The others are counting on you! </li>
+                        <li>- To share experiences. Sharing is key to building strong relationships.</li>
+                    </ul>
+                    <p>No matter your age, your culture or your origins... it is the differences between us that make for the richness of our comeetings.</p>
+                    <p>You can start right now in Paris. Try it out, the comeeters will be glad to welcome you.</p>
+                    <p>
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <a href="{{ path('show_events') }}" class="btn">Start now</a>
+                        {% else %}
+                            <a href="#login-register" class="btn modal-trigger register-trigger">Start now</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

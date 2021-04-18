@@ -1,0 +1,176 @@
+{% extends 'main_layout.html.twig' %}
+
+{% set footer_mobile_class = "hide" %}
+
+{% block title %}Propose an event{% endblock %}
+{% block logguedNavbar %}
+    <span class="left"><a href="{{ path('show_events') }}"><i class="fa fa-close material-fa" aria-hidden="true"></i></a></span>
+    <span class="right"><a href="#" id="save-event">{% if event.id is defined %}Modify{% else %}Create{% endif %}</a></span>
+{% endblock %}
+
+{%  block mainContent %}
+    <div class="container">
+        <div class="section">
+            <div class="row">
+                {% if errorType is defined %}
+                        <div class="col s12">
+                            <div class="card-panel error">
+                                {% if errorType == "only_owner_can_edit" %}
+                                    Only the organizer can edit the event.
+                                {% else %}
+                                    An error occured.
+                                {%  endif %}
+                            </div>
+                        </div>
+                {% endif %}
+                {% if hideForm is not defined %}
+                <form class="col s12 event_form" id="{% if event.id is defined %}edit_event_form{% else %}create_event_form{% endif %}">
+                    <h1>Propose an event</h1>
+                        <div class="row hide" id="form-error-block">
+                            <div class="col s12">
+                                <div class="card-panel error" id="form-error-message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 input-field-spacing">
+                                <label>Who can see this event?</label>
+                                <ul class="choices" data-input="public">
+                                    <li class="choice col s6 {% if event.public is not defined or (event.public is defined and event.public == true) %} active{% endif %}" data-value="1"><a>Everyone</a></li>
+                                    <li class="choice col s6 {% if event.public is defined and event.public == false %} active{% endif %}" data-info="private-event-info"  data-value="0"><a>Invited users</a></li>
+                                </ul>
+                                <div class="card-panel choice-card-panel info hide" id="private-event-info">
+                                    You will have to invite friends manually or share them the link to the event
+                                </div>
+                            </div>
+
+                            <input type="hidden"  name="public" id="public" value="{% if event.public is defined %}{{ event.public }}{% else %}1{% endif %}" />
+
+                            <div class="input-field col s12">
+                                <input name="title" placeholder="" type="text" class="validate default-focus"
+                                        {% if event.title is not empty %}value="{{ event.title }}"{% endif %}>
+                                <label for="title">Title <span class="required">*</span></label>
+                            </div>
+                            <div class="input-field col s12">
+
+                                <input id="address" name="address" placeholder="" type="text" class="validate"
+                                       {% if event.address is not empty %}value="{{ event.address }}"{% endif %}>
+                                <label for="address">Address <span class="required">*</span></label>
+                                <input name="placeExternalId" readonly placeholder="" type="hidden"
+                                       {% if event is defined and event.placeExternalId is not empty %}value="{{ event.placeExternalId }}"{% endif %}>
+
+                            </div>
+                            <div class="col s6">
+                                <label for="startDate" class="active">Date <span class="required">*</span></label>
+                                <input name="startDate" placeholder="" type="date" class="datepicker validate"
+                                       {% if event.startDateTime is not empty %}data-value="{{ event.startDateTime|date('Y-m-d') }}"{% endif %}>
+
+                            </div>
+                            <div class="col s6">
+                                <label for="startTime">Time <span class="required">*</span></label>
+                                <input name="startTime" placeholder="" type="text" class="timepicker validate"
+                                       {% if event.startDateTime is not empty %}data-default="{{ event.startDateTime|date('H:i') }}" value="{{ event.startDateTime|date('H:i') }}"{% endif %}>
+
+                            </div>
+                            <div class=" col s12">
+                                <label for="maximumCapacity">Number of participants</label>
+                                <select name="maximumCapacity" class="browser-default">
+                                    {% if is_granted('ROLE_SUPER_ADMIN')  %}
+                                        {% set maxAuthorizedCapacity = 60 %}
+                                    {% elseif is_granted('ROLE_SUBSCRIBER_STANDARD') %}
+                                        {% set maxAuthorizedCapacity = 15 %}
+                                    {% else %}
+                                        {%  set maxAuthorizedCapacity = 10 %}
+                                    {% endif %}
+                                    {% for i in 3..maxAuthorizedCapacity %}
+                                        <option value="{{ i }}"
+                                                {% if (event.maximumCapacity is empty and i == 10) or
+                                                (event.maximumCapacity is not empty  and i == event.maximumCapacity)
+                                                %} selected {% endif %} >{{ i }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="input-field col s12" id="description-block">
+                                <textarea class="materialize-textarea validate" id="description" name="description">{% if event.description is not empty %}{{ event.description }}{% endif %}</textarea>
+                                <label for="description">Description</label>
+                            </div>
+
+                            <div class="input-field col s12 hide-on-med-and-down">
+                                {% if event.id is defined %}
+                                    <input type="hidden" id="eventId" value="{{ event.id }}">
+                                    <button class="btn waves-effect waves-light" type="submit" name="action">Modify
+                                        <i class="material-icons right">send</i>
+                                    </button>
+                                {% else %}
+                                <button class="btn waves-effect waves-light" type="submit" name="action">Create
+                                    <i class="material-icons right">send</i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <input name="startDateTime" placeholder="" type="text" class="hide">
+                        </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/create_event.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        var CREATE_EVENT_SUCCESS_URL_PATH = '/events/{eventId}';
+
+
+        var placeSearch, autocomplete;
+
+        function initAutocomplete() {
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete = new google.maps.places.Autocomplete(
+                    /** @type {!HTMLInputElement} */(document.getElementById('address')),
+                    {types: []});
+
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            autocomplete.addListener('place_changed', fillInAddress);
+        }
+
+        function fillInAddress() {
+            // Get the place details from the autocomplete object.
+            var place = autocomplete.getPlace();
+            if(place.hasOwnProperty('types')) {
+                if(place.name != place.formatted_address && place.formatted_address.indexOf(place.name) !== 0) {
+                    $('#address').val(place.name + ', ' + place.formatted_address);
+                } else {
+                    $('#address').val(place.formatted_address);
+                }
+                $('input[name="placeExternalId"]').val(place.place_id);
+                if (place.types.find(findPlace) !== undefined) {
+                    $('input[name="placeExternalId"]').val(place.place_id);
+
+                }
+            }
+        }
+
+        function findPlace(type) {
+            return (type === "establishment" || type === "point_of_interest" );
+        }
+
+        $('#address').change( function() {
+            $('input[name="placeExternalId"]').val('');
+        });
+
+
+    </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZIu06Q86obYhvfUYsngW0H4IPmwEfrdU&libraries=places&callback=initAutocomplete"
+        async defer></script>
+
+{% endblock %}

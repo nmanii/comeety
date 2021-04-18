@@ -1,0 +1,47 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block title %}Confirmation successful{% endblock %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel success">
+                    Congratulations! Your account has been successfully activated. <br />
+                </div>
+                <p>
+                    You can now log in and participate within the community.
+                </p>
+                <div class="login-block">
+                    <div class="row hide login-error-block">
+                        <div class="card-panel error login-error-message">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <form class="col s12" method="POST">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input name="username" id="email" type="email" class="validate">
+                                    <label for="email">Email</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input name="password" id="password" type="password">
+                                    <label for="password">Password</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <div class="row">
+                                        <button class="btn waves-effect waves-light s12 col" type="submit" name="action">Log in
+                                            <i class="material-icons right">send</i>
+                                        </button>
+                                    </div>
+                                    <div class="row">
+                                        <a href="#login-register" class="modal-trigger password-reset-trigger center-align col s12">Forgot password?</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

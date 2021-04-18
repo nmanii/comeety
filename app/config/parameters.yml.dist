@@ -1,0 +1,33 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    database_host:     127.0.0.1
+    database_port:     ~
+    database_name:     symfony
+    database_user:     root
+    database_password: ~
+    # You should uncomment this if you want use pdo_sqlite
+    # database_path: "%kernel.root_dir%/data.db3"
+
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
+
+    # A secret key that's used to generate certain security-related tokens
+    secret:            ThisTokenIsNotSoSecretChangeIt
+    api_base_url: ~
+    api_ssl_checking: true
+    auth_cookie.domain:
+    auth_cookie.name:
+    google_analytics_account:
+    assets_version: 1
+    discourse_sso_key: ~
+    discourse_forum_login_path: ~
+    discourse_sso_success: ~
+    abtest_cookie.domain: dev.comeety.local
+    abtest_cookie.name: ab
+    abtest_configuration:
+      homepage_explanation: [reference, with_explanation]
+

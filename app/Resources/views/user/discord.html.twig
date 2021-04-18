@@ -1,0 +1,65 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block mainId %}Discord{% endblock %}
+
+{% block logguedNavbar %}
+    <span class="left"><a href="{{ path('user_profile', {'userId': app.user.id}) }}">Go to My profile</a></span>
+{% endblock %}
+
+{% block title %}Discord{% endblock %}
+{%  block mainContent %}
+    <div id='vueapp'>
+        <div class="section" id="top">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12" v-cloak>
+                        <h1>Your discord name </h1>
+                        <div v-if="!loaded">
+                            <td>Loading...</td>
+                        </div>
+                        <div v-if="loaded" class="v-cloak--hidden">
+                            <template v-if="!changeSuccessful">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div>
+                                            <b>Step 1</b>: Register on <a href="https://discord.gg/akF5fVm6Zp">https://discord.gg/akF5fVm6Zp</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <b>Step 2</b>: Enter your discord name below and submit</b>
+                                <form id="test" v-on:submit.prevent="updateDiscordName">
+                                    <input type="text" name="discordName" v-model=discordName>
+                                    <div class="modal-footer center">
+                                        <button class="btn waves-effect waves-light" type="submit" >Send
+                                            <i class="material-icons right">send</i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </template>
+                            <template v-else>
+                                Your discord name has been changed. You will be granted access to the discord within 24 hours.
+                            </template>
+
+                        </div>
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>var CURRENT_USER_ID = {{ app.user.id }};</script>
+    {% javascripts
+    'js/discord.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}

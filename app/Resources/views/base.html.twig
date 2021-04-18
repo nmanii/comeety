@@ -1,0 +1,138 @@
+    <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('/css/materialize.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="manifest" href="{{ asset('/manifest.json') }}">
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+            ga('create', '{{ google_analytics_account }}', 'auto');
+            ga('send', 'pageview');
+            {% if abtest_variant is defined %}
+                ga('set', 'abtest', '{{ abtest_variant }}');
+            {% endif %}
+
+        </script>
+        {% block meta %}{% endblock %}
+
+        {% if app.environment == "prod" %}
+            <script>
+                (function(h,o,t,j,a,r){
+                    h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                    h._hjSettings={hjid:926954,hjsv:6};
+                    a=o.getElementsByTagName('head')[0];
+                    r=o.createElement('script');r.async=1;
+                    r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                    a.appendChild(r);
+                })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+            </script>
+            <script>
+                window['_fs_debug'] = false;
+                window['_fs_host'] = 'fullstory.com';
+                window['_fs_org'] = 'J5VT6';
+                window['_fs_namespace'] = 'FS';
+                (function(m,n,e,t,l,o,g,y){
+                    if (e in m) {if(m.console && m.console.log) { m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');} return;}
+                    g=m[e]=function(a,b,s){g.q?g.q.push([a,b,s]):g._api(a,b,s);};g.q=[];
+                    o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
+                    y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
+                    g.identify=function(i,v,s){g(l,{uid:i},s);if(v)g(l,v,s)};g.setUserVars=function(v,s){g(l,v,s)};g.event=function(i,v,s){g('event',{n:i,p:v},s)};
+                    g.shutdown=function(){g("rec",!1)};g.restart=function(){g("rec",!0)};
+                    g.consent=function(a){g("consent",!arguments.length||a)};
+                    g.identifyAccount=function(i,v){o='account';v=v||{};v.acctId=i;g(o,v)};
+                    g.clearUserCookie=function(){};
+                })(window,document,window['_fs_namespace'],'script','user');
+            </script>
+            <!-- Start of Async Drift Code -->
+            <script>
+                "use strict";
+
+                !function() {
+                    var t = window.driftt = window.drift = window.driftt || [];
+                    if (!t.init) {
+                        if (t.invoked) return void (window.console && console.error && console.error("Drift snippet included twice."));
+                        t.invoked = !0, t.methods = [ "identify", "config", "track", "reset", "debug", "show", "ping", "page", "hide", "off", "on" ],
+                            t.factory = function(e) {
+                                return function() {
+                                    var n = Array.prototype.slice.call(arguments);
+                                    return n.unshift(e), t.push(n), t;
+                                };
+                            }, t.methods.forEach(function(e) {
+                            t[e] = t.factory(e);
+                        }), t.load = function(t) {
+                            var e = 3e5, n = Math.ceil(new Date() / e) * e, o = document.createElement("script");
+                            o.type = "text/javascript", o.async = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + n + "/" + t + ".js";
+                            var i = document.getElementsByTagName("script")[0];
+                            i.parentNode.insertBefore(o, i);
+                        };
+                    }
+                }();
+                drift.SNIPPET_VERSION = '0.3.1';
+                drift.load('6sbmcdctyp2h');
+                drift.config({welcomeMessageDelay: 5000});
+                drift.on("ready", api => {
+                    api.widget.hide()
+
+                if (window.innerWidth >= 780) {
+                    api.widget.show()
+                }
+
+                })
+            </script>
+            <style>
+                @media (max-width: 610px) {
+                    .drift-zoom-pane.drift-open, .drift-zoom-pane {
+                        display: none;
+                    }
+                }
+            </style>
+            <!-- End of Async Drift Code -->
+        {% endif %}
+    </head>
+    <body>
+        <div class="font_preload" style="opacity: 0;height:1px;">
+            <span style="font-family: Roboto;font-weight:300;"></span>
+            <span style="font-family: Roboto;font-weight:500;"></span>
+            ...
+        </div>
+        {% block body %}{% endblock %}
+
+
+
+        <!-- <script src="js/prevent_double_submission.js"></script> -->
+        {% block javascripts %}
+            {% javascripts
+            'js/vendor/firebase-app.js'
+            'js/vendor/firebase-messaging.js'
+            %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+
+                {% javascripts
+            'js/vendor/jquery.min.js'
+            'js/vendor/materialize.min.js'
+            'js/materialize_change.js'
+            'js/vendor/jquery.timeago1.5.3.min.js'
+            'js/vendor/mustache.min.js'
+            'js/main.js'
+            'js/login.js'
+            'js/apiClient.js'
+            'js/moment.min.js'
+            'js/community_invite.js'
+            %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        {% endblock %}
+    </body>
+</html>

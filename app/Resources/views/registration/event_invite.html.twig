@@ -1,0 +1,57 @@
+<div class="modal modal-fixed-footer" id="event_invite_module">
+    <div class="row" id="event-invite-main">
+        <div class="col s12 modal-content">
+            <h4>Event invitation</h4>
+            <form data-event-id="{{ eventId }}">
+                <div class="row">
+                    <div class="col s12 hide" id="event_invite-list-user-template">
+                        <p>
+                            <input type="checkbox" id="event-invite-user-#target_user_id#" value="#target_user_id#" name=""/>
+                            <label for="event-invite-user-#target_user_id#" class="user-label"></label>
+                        </p>
+                    </div>
+                    <div id="event_invite-list">
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" id="event-invite-submit" class="waves-effect waves-green btn ">Invite</a>
+        </div>
+    </div>
+    <div class="row hide" id="event-invite-empty-list">
+        <div class="col s12 modal-content">
+            <h4>Event invitation</h4>
+            <div class="row">
+                <div class="col s12" >
+                    Please add comeeters to your contact list in order to be able to invite them to events.
+                </div>
+                <div class="col s12" >
+                    <br />
+                    You can:<br />
+                    - invite your friends from the contacts section<br />
+                    - or connect with comeeters after joining an event from the event page
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn ">Close</a>
+        </div>
+    </div>
+    <div class="row hide" id="event-invite-success">
+        <div class="col s12 modal-content">
+            <h4>Event invitation</h4>
+            <div class="row">
+                <div class="col s12" >
+                    <div class="card-panel success">
+                        Your invitations have been sent
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn ">Close</a>
+        </div>
+    </div>
+</div>

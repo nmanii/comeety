@@ -1,0 +1,236 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <nav role="navigation" class="hide-on-med-and-down {% if(navClass is defined) %} {{ navClass }}{% endif %}">
+        <div class="nav-wrapper container">
+            <div id="top-nav-desktop">
+                <span class="left"><a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a></span>
+                <span><a id="logo-container" href="{{ path('homepage') }}">Comeety.net</a></span>
+                <ul class="right">
+                    <li><a href="{{ path('show_events') }}">Events</a></li>
+                    <li><a href="{{ path('create_event') }}" class="btn">Propose an event</a></li>
+                    <li><a href="#" class="dropdown-button" data-activates="dropdown1" data-beloworigin="true"
+                           data-alignment="right" data-constrainwidth="false"><i class="fa fa-user-circle material-fa fa-fw" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <ul id="slide-out" class="side-nav">
+        <li><div class="user-view">
+                <div class="background">
+                    <img src="/images/group.jpg" width="100%">
+                </div>
+                {# <a href="#!user"><img class="circle" src="images/yuna.jpg"></a> #}
+                <a href="{{ path('user_profile', {'userId': app.user.id}) }}"><span class="white-text name">{{ app.user.username }}</span></a>
+                </div>
+        </li>
+        <li><a href="{{ path('edit_profile') }}">Edit my profile</a></li></li>
+        <li><a href="{{ logout_path() }}" class="logout_trigger">Log out</a></li>
+        <li><div class="divider"></div></li>
+        <li><a class="subheader">Comeety.net</a></li>
+        <li><a class="waves-effect" href="{{ path('about_us') }}">About Us</a></li>
+        <li><a class="waves-effect" href="{{ path('contact') }}">Contact</a></li>
+    </ul>
+    {% endif %}
+    <nav id="page-top-nav" role="navigation" class="{% if(navClass is defined) %} {{ navClass }}{% endif %}">
+        <div class="nav-wrapper container">
+            <div id="top-nav-desktop">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <span class="left hide-on-large-only"><a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a></span>
+                    {% block logguedNavbar %}
+                    {% endblock %}
+                {% else %}
+                    <span><a id="logo-container" href="{{ path('homepage') }}">Comeety.net</a></span>
+                    <ul class="right">
+                        <span class="hide-on-med-and-down"><li><a href="{{ path('show_events') }}">Events</a></li></span>
+                        <li><a href="#login-register" class="modal-trigger login-trigger">Log in</a></li>
+                        <li><a href="#login-register" class="modal-trigger register-trigger orange white-text ">Sign Up</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% block navContent %}{% endblock %}
+    </nav>
+    <div id="page-top-nav-stub" class="{% if(navClass is defined) %} {{ navClass }}{% endif %} hide-on-large-only">&nbsp;</div>
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <ul id="dropdown1" class="dropdown-content">
+            <li><a href="{{ path('user_profile', {'userId': app.user.id}) }}">{{ app.user.username }}</a></li>
+            <li><a href="{{ path('dashboard') }}">My agenda</a></li>
+            <li><a href="{{ path('show_connections') }}">My connections</a></li>
+            <li><a href="{{ path('edit_profile') }}">Edit my profile</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ logout_path() }}" class="logout_trigger">Log out</a></li>
+        </ul>
+    {% endif %}
+    <main id="{% block mainId %}{% endblock %}">
+        {% block mainContent %}
+        {% endblock %}
+    </main>
+
+    <div id="login-register" class="modal full">
+        {# PASSWORD RESET FROM #}
+        <div class="modal-content" id="password-reset-block">
+            <h4>Reset your password</h4>
+            <div class="row hide password-reset-success-block">
+                <div class="col s12">
+                    <div class="card-panel success password-reset-success-message">
+                        An email has been sent with the instructions to reset your password.
+                    </div>
+                </div>
+            </div>
+            <div class="row hide password-reset-error-block no-margin-bot">
+                <div class="col s12">
+                    <div class="card-panel error password-reset-error-message">
+                    </div>
+                </div>
+            </div>
+            <div class="row  no-margin-bot" id="password-reset-form-block">
+                <div class="row">
+                    <form class="col s12" method="POST">
+                        <div class="input-field">
+                            <input name="email" id="email" type="email" class="validate">
+                            <label for="email">Email</label>
+                        </div>
+                        <button class="btn waves-effect waves-light full-width" type="submit" name="action">Reset my
+                            password
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        Already have an account? <a href="#login" class="login-trigger">Log in</a>
+                    </div>
+                </div>
+                <div class="row no-margin-bot">
+                    <div class="col s12">
+                        No account? <a href="#register"
+                                class="register-trigger"
+                                name="action">Sign up
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# LOGIN FROM #}
+        <div class="modal-content" id="login-block">
+            <h4>Log in</h4>
+            <div class="row hide login-error-block no-margin-bot">
+                <div class="col s12">
+                    <div class="card-panel error login-error-message"></div>
+                </div>
+            </div>
+            <div class="row no-margin-bot">
+                <form class="col s12" method="POST">
+                    <div class="input-field">
+                        <input name="username" id="email" type="email" class="validate">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="input-field">
+                        <input name="password" id="password" type="password">
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="row">
+                        <button class="btn waves-effect waves-light full-width col s12" type="submit" name="action">Log in
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </form>
+                <div class="col s12">
+                    <a href="#" class="password-reset-trigger">Forgot password?</a>
+                </div>
+                <div class="col s12">
+                    No account? <a href="#register"
+                            class="register-trigger create-account-link"
+                            name="action"> Sign up
+                    </a>
+                </div>
+            </div>
+        </div>
+        {# REGISTRATION FROM #}
+        <div class="modal-content register-block" id="register-block">
+            <h4>Sign up</h4>
+            <div class="row hide register-error-block no-margin-bot">
+                <div class="col s12">
+                    <div class="card-panel error register-error-message">
+                    </div>
+                </div>
+            </div>
+            <div class="row no-margin-bot">
+                <form class="col s12" method="POST">
+                    <div class="input-field">
+                        <input id="email" name="email" type="email" class="validate">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="input-field">
+                        <input id="plainPassword" name="plainPassword" type="password" class="validate">
+                        <label for="plainPassword">Password</label>
+                    </div>
+                    <div class="input-field">
+                        <input name="repeatPassword" type="password" class="validate">
+                        <label for="repeatPassword">Repeat password</label>
+                    </div>
+                    <button class="btn waves-effect waves-light full-width" type="submit" name="action">Create my account
+                        <i class="material-icons right">send</i>
+                    </button>
+                    <div class="create-account-link">Already have an account? <a href="#login" class="login-trigger "> Log in</a></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer {% if is_granted('IS_AUTHENTICATED_FULLY')  %}hide{% endif %}">
+        <div class=" container ">
+            <div class="row">
+                <div class="col s12 center-align" id="footer-nav">
+                    <ul class="row center-align">
+                        <li><a href="{{ path('about_us') }}">About Us</a></li>
+                        <li><a href="{{ path('contact') }}">Contact</a></li>
+                        <li><a href="https://www.facebook.com/comeety/"><i class="fa fa-facebook fa-border fa-fw" aria-hidden="true"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% if is_granted('IS_AUTHENTICATED_FULLY')  %}
+        <nav class="page-footer-mobile {% if(footer_mobile_class is defined) %} {{ footer_mobile_class }}{% endif %}">
+            <div class="nav-wrapper">
+                <ul id="nav-mobile">
+                    <li><a href="{{ path('dashboard') }}" class="{% if pageType is defined and pageType == "dashboard" %}active{% endif %}"><i class="fa fa-bookmark-o fa-fw material-fa"  aria-hidden="true"></i><br/>My Agenda</a></li>
+                    <li><a href="{{ path('show_events') }}" class="{% if pageType is defined and pageType == "events" %}active{% endif %}"><i class="fa fa-calendar fa-fw material-fa" aria-hidden="true"></i><br/>Events</a></li>
+                    <li><a href="{{ path('show_connections') }}" class="{% if pageType is defined and pageType == "contacts" %}active{% endif %}"><i class="fa fa-users fa-fw material-fa" aria-hidden="true"></i><br/>Contacts</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="page-footer-mobile-stub  {% if(footer_mobile_class is defined) %} {{ footer_mobile_class }} {% endif %}"></div>
+    {% endif %}
+    {% include "registration/community_invite.html.twig" %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var APP_API_DOMAIN = "{{ api_base_url }}";
+        var ApiClient1 = new ApiClient(APP_API_DOMAIN);
+        var ApiClient2 = new ApiClientAxios(APP_API_DOMAIN);
+        var REGISTRATION_SUCCESS_URL_PATH = '/registration-success';
+        var LOGIN_SUCCESS_URL_PATH = '/events';
+        var PROFILE_URL_PATH = '/user/#user-id#/profile';
+
+        var currentUserId = {% if is_granted('IS_AUTHENTICATED_FULLY') %} {{ app.user.id }}; {% else %} null; {% endif %}
+
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            refreshAuthenticationToken();
+            if(typeof(drift) !== "undefined") {
+                drift.identify({{ app.user.id }},
+                {% if app.user.firstname is defined %} {
+                  'name': '{{ app.user.id }} {{ app.user.firstname }}'
+                } {% else %} {} {% endif %});
+            }
+
+        {% endif %}
+    </script>
+{% endblock %}

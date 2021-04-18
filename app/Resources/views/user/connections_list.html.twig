@@ -1,0 +1,102 @@
+{% extends 'main_layout.html.twig' %}
+{% set pageType = "contacts" %}
+
+
+{% block title %}My connections{% endblock %}
+
+{% block logguedNavbar %}
+    <span class="right"><a href="#community_invite_module" class="modal-trigger top-nav-invite-icon"><i class="fa fa-user-plus material-fa fa-fw" aria-hidden="true"></i></a> <a href="{{ path('create_event') }}"><i class="fa fa-fw fa-calendar-plus-o material-fa" aria-hidden="true"></i></a></span>
+{% endblock %}
+
+{% set navClass ="nav-extended" %}
+
+{% block navContent %}
+    <div class="nav-content container">
+        <ul class="tabs tabs-transparent" id=connections-tabs">
+            <li class="tab"><a href="#following">Contacts</a></li>
+            <li class="tab"><a href="#followers">Following me</a></li>
+            <li class="tab"><a href="#blocked">Blocked</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{%  block mainContent %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="row hide-on-med-and-down">
+                    <h1 class="col s12 ">Contacts</h1>
+                </div>
+                <div class="row hide" id="no-connection-message-block">
+                    <div class="col s12">
+                        <div id="no-connection-message-block-message">
+                            You don't have any connection yet.
+                        </div>
+                    </div>
+                </div>
+                <span id="following">
+                </span>
+                <span id="followers">
+                </span>
+                <span id="blocked"></span>
+                </div>
+                <div class="mainContactBlock">
+                    <div class="col s12" id="connections-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hide" id="connection-template">
+        <div class="row">
+            <div class="col s3">
+                <span class="commitment-avatar">
+                    <img class="flag" src="/images/flags-iso/flat/32/#native_country#.png" />
+                </span>
+            </div>
+            <div class="col s7">
+                <a href="#" class="detail-link"><span class="name"></span></a><br />
+                <span class="time">added <time class="timeago"></time></span>
+                <span class="state new badge hide" data-badge-caption=""></span>
+            </div>
+            <div class="col s2">
+                <a href="#" class="dropdown-button"
+                   data-alignment="right" data-constrainwidth="false"><i class="fa fa-ellipsis-v fa-fw material-fa right-align" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <ul id='connection-dropdown-#target_user_id#' class='dropdown-content'>
+            <li>
+                <a href="#" class="connect-user-link" data-target-user-id="#target_user_id#"><i class="fa fa-user-plus fa-fw " aria-hidden="true"></i>Connect</a>
+            </li>
+            <li>
+                <a href="#" class="pause-user-link" data-target-user-id="#target_user_id#"><i class="fa fa-pause fa-fw " aria-hidden="true"></i>Pause</a>
+            </li>
+            <li>
+                <a href="#" class="block-user-link" data-target-user-id="#target_user_id#"><i class="fa fa-stop fa-fw " aria-hidden="true"></i>Block</a>
+            </li>
+            {# <li>
+                <a href="#" class="delete-user-link" data-target-user-id="#target_user_id#"><i class="fa fa-times fa-fw " aria-hidden="true"></i>Delete</a>
+            </li> #}
+        </ul>
+    </div>
+
+    <div class="modal modal-fixed-footer" id="error-modal">
+        <div class="row">
+            <div class="col s12 modal-content">
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-orange btn-flat ">Ok</a>
+            </div>
+        </div>
+    </div>
+    <!-- Dropdown Structure -->
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/connections.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

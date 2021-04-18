@@ -1,0 +1,67 @@
+{% extends 'main_layout.html.twig' %}
+{% block title %}Login{% endblock %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    Logging in...
+                    <div class="loader"></div>
+                {% else %}
+                    <p>
+                        Please log in
+                    </p>
+                    <div class="login-block">
+                        <div class="row hide login-error-block">
+                            <div class="card-panel error login-error-message">
+                            </div>
+                        </div>
+                        {% if app.request.get('password_modified') == 1  %}
+                            <div class="row">
+                                <div class="card-panel success">
+                                    Your password has been successfully modified. You can now connect with your new password.
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <form class="col s12" method="POST">
+                                <div class="input-field">
+                                    <input name="username" id="email" type="email" class="validate">
+                                    <label for="email">Email</label>
+
+                                <div class="input-field">
+                                    <input name="password" id="password" type="password">
+                                    <label for="password">Password</label>
+                                </div>
+                                <div class="input-field">
+                                    <div class="row">
+                                        <button class="btn waves-effect waves-light s12 col" type="submit" name="action">Log in
+                                            <i class="material-icons right">send</i>
+                                        </button>
+                                    </div>
+                                    <div class="row">
+                                        <a href="#login-register" class="modal-trigger password-reset-trigger center-align col s12">Forgot password?</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if isDiscourseLogin is defined %}
+    <script>
+        var DISCOURSE_SUCCESS_URL_PATH = "{{ discoureSsoSuccessPath }}";
+        var DISCOURSE_NONCE = "{{ nonce }}";
+        var IS_DISCOURSE_AUTHENTICATION = true;
+    </script>
+    {% endif %}
+    <script>
+        tryAutoLogin();
+    </script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'main_layout.html.twig' %}
+
+{% set navClass ="hide" %}
+
+{% block title %}Subscription successful{% endblock %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel success">
+                    Congratulations! Your subscription is now active. <br />
+                    We will contact you shorlty to give you the payment procedure.
+                </div>
+                <p>
+                    You can now enjoy your new status benefits :)
+                </p>
+                <p>
+                    <a class="btn" href="{{ path('show_events') }}">Return to the event list</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

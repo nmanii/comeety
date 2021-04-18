@@ -1,0 +1,93 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block title %}Introduce yourself{% endblock %}
+{% block logguedNavbar %}
+    <span class="left"><a href="{{ path('show_events') }}"><i class="fa fa-close material-fa fa-fw" aria-hidden="true"></i></a></span>
+    <span class="right"><a href="#" id="save-profile">Save</a></span>
+{% endblock %}
+{% set footer_mobile_class = "hide" %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="row">
+            <form class="col s12" id="complete_profile_form">
+                <h1>Introduce yourself to the community</h1>
+                <div class="section no-pad-bot">
+                    <div class="row hide" id="form-error-block">
+                        <div class="col s12">
+                            <div class="card-panel error" id="form-error-message">
+                            </div>
+                        </div>
+                    </div>
+                    {% if profile_error is defined %}
+                        <div class="row" id="form-error-block">
+                            <div class="col s12">
+                                <div class="card-panel error" id="form-error-message">
+                                    An error occured while trying to retrieving your informations.
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input name="firstName" placeholder="" type="text" class="validate"
+                                   {% if profile is defined %}value="{{ profile.firstName }}"{% endif %}>
+                            <label for="firstName">First Name</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input name="lastName" placeholder="" type="text" class="validate"
+                                   {% if profile is defined %}value="{{ profile.lastName }}"{% endif %}>
+                            <label for="lastName">Last Name</label>
+                        </div>
+                        <div class="col s12">
+                            <label for="birthDate">Birth date</label>
+                            <input name="birthDate" type="date" placeholder="" class="birth_datepicker" class="validate"
+                                   {% if profile is defined %}data-value="{{ profile.birthDate|date('Y-m-d') }}"{% endif %}>
+
+                        </div>
+                        <div class="col s12">
+
+                            <label>Gender</label>
+                            <ul class="input-field-spacing choices">
+                                <li class="choice col s6"><a {% if (profile is defined and profile.gender == 1) or profile is not defined %} class="active"{% endif %} id="gender_male" data-value="1">Boy &#9794;</a></li>
+                                <li class="choice col s6"><a {% if (profile is defined and profile.gender == 2) %} class="active"{% endif %} id="gender_female" data-value="2">Girl &#9792;</a></li>
+                            </ul>
+                        </div>
+                        <input id="gender" name="gender" type="text" value="{% if (profile is defined) %}{{ profile.gender }}{% else %}1{% endif %}" class="hide">
+                        <div class="col s12">
+                            <label for="nativeCountry">Native country</label>
+                            <select name="nativeCountry" class="validate browser-default input-field-spacing">
+                                <option value="" disabled selected>Choose your option</option>
+                                {% for code, name in countryList %}
+                                    <option value="{{ code }}" {% if profile is defined and profile.nativeCountry == code %}selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% if profile is defined %}
+                        <div class="col s12 input-field">
+                            <textarea name="motto" class="validate materialize-textarea" maxlength="140">{{ profile.motto}}</textarea>
+                            <label for="motto">Motto (max 140 characters)</label>
+                        </div>
+                        {% endif %}
+                        <div class="input-field col s12 hide-on-med-and-down" id="form-submit">
+                            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/complete_profile.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        var COMPLETE_PROFILE_SUCCESS_URL_PATH = '/';
+    </script>
+{% endblock %}

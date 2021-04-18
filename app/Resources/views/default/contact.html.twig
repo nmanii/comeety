@@ -1,0 +1,63 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block logguedNavbar %}
+    <span class="left"><a href="{{ path('show_events') }}"><i class="fa fa-close material-fa fa-fw" aria-hidden="true"></i></a></span>
+    <span class="left">Contact the comeeteam</span>
+    <span class="right"><a href="#" id="send-message">Send</a></span>
+{% endblock %}
+{% set footer_mobile_class = "hide" %}
+
+{% block title %}Contact the comeeteam{% endblock %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="section">
+            <h1 class="hide-on-med-and-down">Contact the comeeteam</h1>
+            <div class="row hide" id="form-success-block">
+                <div class="col s12">
+                    <div class="card-panel success">
+                        Thank you for your message. We'll get back to you soon.
+                    </div>
+                </div>
+            </div>
+            <div class="row hide" id="form-error-block">
+                <div class="col s12">
+                    <div class="card-panel error">
+                    </div>
+                </div>
+            </div>
+            <form id="contact_form">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input name="senderName" placeholder="" type="text" required class="validate"
+                                {% if user is not null %}value="{{ user.firstName }}"{% endif %}>
+                        <label for="senderName">Name <span class="required">*</span></label>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="senderEmail" placeholder="" type="email" class="validate"
+                               {% if user is not null %}value="{{ user.email }}"{% endif %}>
+                        <label for="senderEmail">Email <span class="required">*</span></label>
+                    </div>
+                    <div class="input-field col s12">
+                        <input name="subject" placeholder="" type="text" required class="validate"
+                               {% if message.subject is not empty %}value="{{ message.subject }}"{% endif %}>
+                        <label for="subject">Subject <span class="required">*</span></label>
+                    </div>
+                    <div class="input-field col s12">
+                        <textarea class="materialize-textarea validate" required name="content">{% if message.content is not empty %}{{ message.content }}{% endif %}</textarea>
+                        <label for="content">Message <span class="required">*</span></label>
+                    </div>
+                    <input type="submit" class="btn hide-on-med-and-down" value="Send">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/company_contact.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

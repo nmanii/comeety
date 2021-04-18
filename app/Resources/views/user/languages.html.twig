@@ -1,0 +1,113 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block mainId %}Languages{% endblock %}
+
+{% block logguedNavbar %}
+    <span class="left"><a href="{{ path('user_profile', {'userId': app.user.id}) }}">Go to My profile</a></span>
+{% endblock %}
+
+{% block title %}Languages{% endblock %}
+{%  block mainContent %}
+    <div id='vueapp'>
+        <div class="section" id="top">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12" v-cloak>
+                        <h1>My languages </h1>
+                        <div v-if="!loaded">
+                            <td>Loading languages...</td>
+                        </div>
+                        <div v-if="loaded" class="v-cloak--hidden">
+                            <template v-if="Object.keys(userLanguages).length === 0">
+                                <div>No languages configurated yet.</div>
+                            </template>
+                            <template v-else>
+                            <table border='1' width='100%' style='border-collapse: collapse;'  >
+                               <tr>
+                                   <th>Language</th>
+                                   <th>Level</th>
+                               </tr>
+                               <tr v-for='userLanguage in userLanguages' >
+                                   <td>${ userLanguage.language.name }</td>
+                                   <td>${ language_level[userLanguage.level] }</td>
+                                   <td><a href="#" @click.prevent="showUserLanguageDialog(userLanguage)">edit</a></td>
+                                   <td><a href="#" @click.prevent="remove(userLanguage.id)">delete</a></td>
+                               </tr>
+
+                             </table>
+                            </template>
+                        </div>
+                        <br />
+                        <div class="center">
+                            <a href="#" @click.prevent="showUserLanguageDialog()" class="btn waves-effect waves-light">
+                                Add language
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="userLanguageModal" class="modal">
+
+            <form id="test" v-on:submit.prevent="createUserLanguage">
+                <div class="modal-content">
+                    <h4>
+                        <span class="headline" v-if="dialogId">Update language</span>
+                        <span class="headline" v-else>Add language</span>
+                    </h4>
+
+                    <div class="row ">
+                        <div class="col col-s-12">
+                            <div v-if="errors.length" class="card-panel red lighten-1 white-text">
+                                <p>
+                                    <b>Please correct the following error(s):</b>
+                                <ul>
+                                    <li v-for="error in errors">${ error }</li>
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                        <label for="language" >Language</label>
+                        <select v-model="selectedLanguage" class="browser-default" name="language" id="language">
+                            <option v-for="language in languages" v-bind:value="language.id">
+                                ${ language.name }
+                            </option>
+                        </select>
+
+                        <label for="level" >Level</label>
+                        <select name="level" class="browser-default" v-model="selectedLevel">
+                            <option value="1">Beginner (You only know a few words of the language, if that.)</option>
+                            <option value="2">Elementary (You can ask a few basic questions and ideas, but with a lot of mistakes.)</option>
+                            <option value="3">Medium (You can converse in many situations, with some errors)</option>
+                            <option value="4">Fluent (Comfortable in most situations, strong vocabulary, few errors.)</option>
+                            <option value="5">Native (You're fluent, pretty much mother tongue. Extremely comfortable, you have complete control over the language.)</option>
+                        </select>
+
+                </div>
+                <div class="modal-footer center">
+                    <button class="btn waves-effect waves-light" type="submit" >Send
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>var CURRENT_USER_ID = {{ app.user.id }};</script>
+    {% javascripts
+    'js/languages.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}

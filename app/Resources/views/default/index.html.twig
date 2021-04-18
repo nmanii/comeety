@@ -1,0 +1,100 @@
+{% extends 'main_layout.html.twig' %}
+
+{% block mainId %}homepage{% endblock %}
+{% block title %}Connect with Internationals & Locals{% endblock %}
+{% block mainContent %}
+<div id="homepage-hero">
+    <div class="section no-pad-bot valign-wrapper">
+        <div class="container valign" >
+            {% if abtest_variant is defined and abtest_variant == "with_explanation" %}
+                <h1 class="header center">Meet & Make Friends in Your City</h1>
+                <div class="row center">
+                    <h5 class="header col s12 white-text">🤝 Connect with Internationals and Locals</h5>
+                </div>
+            {% else %}
+            <h1 class="header center">Connect with <br />Internationals & Locals</h1>
+            <div class="row center">
+                <h5 class="header col s12 white-text">Make friends - Discover cultures - Enjoy activities together</h5>
+            </div>
+            {% endif %}
+            <div class="row center">
+                <a href="#login-register" class="modal-trigger register-trigger btn-large waves-effect waves-light">Get onboard</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+    {% if abtest_variant is defined and abtest_variant == "with_explanation" %}
+        <div id="homepage-explanation">
+            <div class="container">
+                <div class="section">
+                    <h2>How does it work?</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <p><b>You are between 20 years and 40 years old?</b></p>
+                            <p>You are one of the thousands of open-minded people in Paris who want to expand their social circle by meeting new people during interesting activities</p>
+                            <p>On comeety.net, <b>everyone can propose, for free, events</b> that they find interesting (go to an exhibition, try a new restaurant, play board games, walk around paris, you name it &#128522;)</p>
+                            <p>The main idea is that <b>rather than going alone to an exhibition, for example, it's better to go with friendly people who share the same interest</b>: there is not better way to make new real friends!</p>
+                            <p>In the same way, <b>everyone can join, for free, events</b> proposed by others.</p>
+                            <p>Here it is! <b>A simple and effective way to meet new people in a very good atmosphere! &#129321;</b>
+                            <p>So it's now up to you, we are waiting to meet you all in Paris!</p>
+                        </div>
+                    </div>
+                    <div class="row center">
+                        <a href="#login-register" class="modal-trigger register-trigger btn-large waves-effect waves-light">Get onboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div id="homepage-description">
+        <div class="container">
+            <div class="section">
+                <h2>Why Join?</h2>
+                <hr>
+                <div class="row center">
+                    <div class="col s12 m4 l4">
+                        <div><i class="fa fa-fw fa-3x fa-globe homepage-description-icon" aria-hidden="true"></i></div>
+                        <h5 class="title">For Internationals</h5>
+                        <div>Whether you are a newcomer, an expat or a local, join the comeeters coming from more than 70 countries</div>
+                    </div>
+                    <div class="col s12 m4 l4">
+                        <div><i class="fa fa-fw fa-3x fa-comments-o homepage-description-icon" aria-hidden="true"></i></div>
+                        <h5>Lots of fun activities !</h5>
+                        <div>Meet for a language exchange, try out a new restaurant, play board games, go on short or longer trips...</div>
+                        <br /><div>
+                            <a class="homepage-description-link" href="{{ path('show_events') }}">See upcoming activities</a></div>
+                    </div>
+                    <div class="col s12  m4 l4">
+                        <div><i class="fa fa-fw fa-3x fa-street-view homepage-description-icon" aria-hidden="true"></i></div>
+                        <h5>Be the one</h5>
+                        <div>Activities are created by the comeeters. Propose a hangout for free and spread the fun around you :)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="homepage-values">
+        <div class="section">
+            <h2 class="center-align">Our Values</h2>
+            <hr>
+            <div class="row center">
+                <div class="col s12 m4 l4">
+                    <h5 class="title">Open-minded</h5>
+                    <div>Be open-minded and tolerant, willing to explore and consider new ideas</div>
+                </div>
+                <div class="col s12 m4 l4">
+                    <h5>Committed</h5>
+                    <div>Keeping your word and come to the event once you have registered. The others are counting on you!</div>
+                </div>
+                <div class="col s12  m4 l4">
+                    <h5>Share experiences</h5>
+                    <div>Sharing is key to building strong and meaningful relationships</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

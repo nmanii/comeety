@@ -1,0 +1,136 @@
+{% extends 'main_layout.html.twig' %}
+
+{% set navClass ="hide" %}
+
+{% block mainId %}pricing{% endblock %}
+{% block title %}Upgrade your plan{% endblock %}
+{%  block mainContent %}
+    <div class="container">
+        <div class="section">
+            <h1>Pricing guide</h1>
+            <div class="row hide" id="form-error-block">
+                <div class="col s12">
+                    <div class="card-panel error">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 l4">
+                    <div class="card plan plan-free">
+                        <div class="name">FREE</div>
+                        <div class="card-content">
+                            <div class="price">0€</div>
+                            <div class="billing-period">Unlimited period of time<br/><br/></div>
+                            <div>
+                                <ul class="collection">
+                                    <li class="collection-item">Max attendees: 10</li>
+                                    <li class="collection-item">2 events</li>
+                                    <li class="collection-item"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Invitation to private events</li>
+                                    <li class="collection-item"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Special deals and discounts with our partners</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="plan-footer">Already subscribed</div>
+                    </div>
+                </div>
+                <div class="col s12 l4">
+                    <div class="card plan plan-standard">
+                        <div class="name">Standard</div>
+                        <div class="card-content">
+                            <div class="price">2€</div>
+                            <div class="billing-period">per month billed annually
+                                <br />3€ billed monthly
+                            </div>
+                            <div>
+                                <ul class="collection">
+                                    <li class="collection-item">Max attendees: 15</li>
+                                    <li class="collection-item">7 events</li>
+                                    <li class="collection-item"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Invitation to private events</li>
+                                    <li class="collection-item"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Special deals and discounts with our partners</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="plan-footer">
+                                <a class="btn orange modal-trigger" href="#standard-subscription-modal">Upgrade</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 l4">
+                    <div class="card plan plan-premium">
+                        <div class="name">Premium</div>
+                        <div class="card-content">
+                            <div class="price">10€</div>
+                            <div class="billing-period">per month billed annually
+                                <br />15€ billed monthly</div>
+                            <div>
+                                <ul class="collection">
+                                    <li class="collection-item">Max attendees: 15</li>
+                                    <li class="collection-item">Unlimited events</li>
+                                    <li class="collection-item"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Invitation to private events</li>
+                                    <li class="collection-item"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Special deals and discounts with our partners</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="plan-footer">
+                            <a class="btn" href="{{ path('contact', {'subject': 'Upgrade to premium account', 'content': 'Hello, I\'d would like to upgrade my account to the premium plan. Thank you'}) }}">Contact us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 s12">
+                    <h2>Why should I pay?</h2>
+                    <p>
+                        Comeety is not only a meet up platform. It welcomes you as part of an internationally-minded community and connects you with people in a meaningful way to build strong relationships based on commitment and trust which are our core values.
+
+                        We offer different plans that fit with different profiles and social needs:
+                    </p>
+                    <ul class="browser-default">
+                        <li>  If you wish to have a light social life and be able to enjoy going out with new people a few times a month then the Free plan may be best for you. This way, you can still be part of the community without any pressure.</li>
+                        <li> Our Standard plan allows you to be part of our community as an active initiator or participant and have access to a number of features while widening your network.</li>
+                        <li> With our Premium plan, you will be able to get the most out of our community and enrich your social life by joining an unlimited number of events, connect with fellow comeeters, view the feedback left on your events, create private events and have your own guestlist...</li>
+                    </ul>
+                    <p>We strive to provide the best social and user experience without displaying any ads nor selling any of your personal data. </p>
+                    </p>
+                </div>
+                <div class="col s12 s12">
+                    <h2>But I don't want to pay. How do I get the Standard plan for free?</h2>
+                    <p>
+
+                        Comeety is proud to support and encourage members who propose their own events and share their interests with the comeeters. So when you have hosted at least 4 events in the last month, the next month is automatically free :)
+                    </p>
+                </div>
+                <div class="col s12 s12">
+                    <h2>I love the concept, I want to support our community</h2>
+                    <p>
+                        We are at the beginning of the adventure and by choosing the Premium membership you will for sure help the community in a financial way. If you feel like accelerating our growth, donations are also more than welcome.
+
+                        But finally, what matters the most is human connections.
+                        So let's meet with internationally-minded people to discover new things, new places and spread the word about our values.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="standard-subscription-modal">
+            <div class="modal-content">
+                <h4>Standard subscription</h4>
+                <p>I want to be billed annually: <a href="#standard-annually" class="plan-selection" data-name="standard-annually">Annual plan (24€)</a> </p>
+                <p>I want to be billed monthly: <a href="#standard-monthly" class="plan-selection" data-name="standard-monthly">Monthly plan (3€/month)</a></p>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/pricing.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>var SUBSCRIPTION_SUCCESS_URL_PATH = "{{ path('subscription_success') }}"</script>
+{% endblock %}

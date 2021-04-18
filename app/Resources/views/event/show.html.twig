@@ -1,0 +1,508 @@
+{% extends 'main_layout.html.twig' %}
+{% set pageType = "events" %}
+
+{% block meta %}
+    {% if(event is defined) %}
+        <meta property="og:image" content="{{ app.request.getSchemeAndHttpHost() }}/images/default_share_event_fb.jpg" />
+        <meta property="og:type" content="article" />
+        <meta property="og:description" content="{{ event.startDateTime|date('l F j, Y') }}, {{ event.startDateTime|date('H:i') }} {% if event.maximumCapacity != null %}- {{ event.maximumCapacity - eventUsers|length}} {% if (event.maximumCapacity - eventUsers|length) >1  %}spots{% else %}spot{% endif %} left{% endif %} - By {{ event.user.profile.firstName }}" />
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@comeety">
+        <meta name="twitter:title" content="{{ event.title }}">
+        <meta name="twitter:description" content="{{ event.startDateTime|date('l F j, Y') }}, {{ event.startDateTime|date('H:i') }} {% if event.maximumCapacity != null %}- {{ event.maximumCapacity - eventUsers|length}} {% if (event.maximumCapacity - eventUsers|length) >1  %}spots{% else %}spot{% endif %} left{% endif %} - By {{ event.user.profile.firstName }}">
+        <meta name="twitter:image" content="{{ app.request.getSchemeAndHttpHost() }}/images/default_share_event_twitter.png">
+    {% endif %}
+{% endblock %}
+{% block title %} {% if(event is defined) %}{{ event.title }}{% endif %}{% endblock %}
+{% block mainId %}show-event{% endblock %}
+
+{% block logguedNavbar %}
+    {% if(event is defined) %}
+        {% if isUserAuthenticated %}
+            <span class="right">
+                <span id="share_mobile" class="hide"><i class="material-fa fa fa-fw fa-share-alt" aria-hidden="true"></i><span class="hide-on-med-and-down">Share</span></span>
+                <a href="{{ path('duplicate_event', {'eventId': event.id}) }}"><i class="material-fa fa fa-files-o fa-fw" aria-hidden="true"></i><span class="hide-on-med-and-down">Copy this event</span></a>
+                {% if isEventOwner is defined and isEventOwner %}
+                    <a href="#" class="dropdown-button" data-activates="event-dropdown"
+                        data-alignment="right" data-constrainwidth="false">
+                        <i class="fa fa-ellipsis-v fa-fw material-fa right-align" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+            </span>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{# % block navContent %}
+    <div class="nav-content container">
+        <ul class="section table-of-contents">
+            <li class="tab"><a href="#anchor-description">Description</a></li>
+            <li class="tab"><a href="#anchor-comments">Comments</a></li>
+            <li class="tab"><a href="#anchor-feedbacks">Feedbacks</a></li>
+            <li class="tab"><a href="#anchor-participants">Whos is coming ?</a></li>
+        </ul>
+    </div>
+{% endblock % #}
+
+
+{%  block mainContent %}
+    {% if(event is defined) %}
+    <div class="section no-pad-bot
+                        {% if isUserAuthenticated == true and event.public == 0 %}
+                        private-title
+                        {% endif %}
+                        " id="title">
+        <div class="container" >
+            <div class="row">
+                <div class="col s12">
+                    <h1>{{ event.title }}</h1>
+                </div>
+                {% if isUserAuthenticated == true and event.public == 0 %}
+                    <div class="chip private-title-info">
+                        <i class="fa-fw fa fa-eye-slash" aria-hidden="true"></i>Private event
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="container">
+            <div class="row">
+                {% if(errorCode is defined) %}
+                <div class="col s12">
+                    <div class="card-panel error">
+                        {% if errorCode == 404 %}
+                            The event doesn't exist.
+                        {% else %}
+                            An error occured.
+                        {%  endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if(event is defined) %}
+                    <div class="col l8 s12 event-data" >
+                        <div class="">
+                        <div class="section" id="anchor-description">
+
+                        <div class="event-section">
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            <div class="row">
+                                <div class="col s12">Created on {{ event.creationDateTime |date('l F j, Y H:i') }}UTC</div>
+                            </div>
+                        {% endif %}
+                            <div class="row">
+                                <div class="col s2 m1 "><i class="material-icons">schedule</i></div>
+                                <div class="col s10 m11">{{ event.startDateTime|date('l F j, Y') }}<br />{{ event.startDateTime|date('H:i') }}<br/>
+                                    {% if isCurrentUserRegistered %}
+                                        <a class="modal-trigger" href="#modal-calendar"><i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> Add to my calendar</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s2 m1"><i class="material-icons">location_on</i></div>
+                                <div class="col s10 m11">
+                                    {% if event.placeName != null %}{{ event.placeName }}<br />{% endif %}<a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ event.address|url_encode }}">{{ event.address }}</a>
+                                </div>
+                            </div>
+
+                                {% if isUserAuthenticated == true %}
+                                    <div class="row">
+                                        <div class="col s12">
+
+                                                {% if isCurrentUserRegistered == true %}
+                                                 {% if event.user.id != app.user.id %}
+                                                        <a href="#cancel-registration-modal" class="modal-trigger">
+                                                 {% endif %}
+                                                    <div class="chip registration-chip white-text  s-full center">
+                                                        Registered
+                                                        {% if event.user.id != app.user.id %}
+                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                 {% if event.user.id != app.user.id %}
+                                                        </a>
+                                                 {% endif %}
+
+
+
+                                                {% else %}
+                                                    {%  if event.maximumCapacity != null and (event.maximumCapacity - eventUsers|length) < 1 %}
+                                                        <div class="chip red white-text ">
+                                                            Full
+                                                        </div>
+                                                    {% else %}
+                                                        <a data-event-id={{ event.id }} class="btn s-full join-event-trigger">Count me in!</a>
+                                                    {% endif %}
+                                                {% endif %}
+
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+
+
+
+                            {% if event.coverUrl is not empty %}
+                            <div class="row">
+                                    <div class="col s12">
+                                <img src="{{ event.coverUrl }}" width="100%">
+                                </div>
+                            </div>
+                            {% endif %}
+
+
+                            {% if event.description is not empty %}
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="event-description">
+                                        {{ event.description|nl2br }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if is_granted('IS_AUTHENTICATED_FULLY') and (event.maximumCapacity == null or (event.maximumCapacity - eventUsers|length) > 0) %}
+
+                                <div >
+                                            {% set shareUrl =  url('show_event', {'eventId': event.id})  %}
+                                            {% set shareTextUser = 'Want to join me to the event: "'~ event.title ~'" on '~ event.startDateTime|date('l F j, Y') ~' at '~ event.startDateTime|date('H:i') ~' ? ' %}
+                                            {% set shareTextGroup = 'Who wants to go to the event: "'~ event.title ~'" on '~ event.startDateTime|date('l F j, Y') ~' at '~ event.startDateTime|date('H:i') ~' ? ' %}
+                                            {% set shareTextGroupWithUrl = shareTextGroup ~ ' '~ shareUrl %}
+
+                                            <span id="share-text-group" class="hide"> {{ app.user.firstName }}</span>
+                                            <div class="share-text">Share</div>
+                                            <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ shareUrl }}&t={{ shareTextUser|e }}&v=3"><span class="share_facebook share_icon"></span></a>
+                                            <a target="_blank" href="https://twitter.com/intent/tweet?text={{ shareTextGroup }}{{ shareUrl }}"><span class="share_twitter share_icon"></span></a>
+                                            <!-- <a target="_blank" href="https://mail.google.com/mail/u/0/?ui=2&view=cm&fs=1&tf=1&su=Want%20to%20join%20me?&body={{ shareTextGroupWithUrl }}"><span class="share_gmail share_icon"></span></a>
+                                            <a target="_blank" href="https://outlook.live.com/owa/?subject=Want%20to%20join%20me?&body={{ shareTextGroupWithUrl }}&path=/mail/action/compose"><span class="share_outlook share_icon"></span></a> -->
+
+                                </div>
+                        {% endif %}
+
+
+                            {% if isUserAuthenticated != true %}
+                                <div class="row">
+                                    <div class="col s12 center-align" ><a href="#login-register" class="btn orange white-text modal-trigger register-trigger">Join this event</a></div>
+                                </div>
+                                <div class="section register-presentation-block">
+                                    <div class="row" >
+                                        <div class="col s12 center-align" ><h2>Meet in small groups with Comeety</h2></div>
+                                        <div class="col s12 center-align"><h5>Our members values</h5></div>
+                                    </div>
+                                    <div class="row no-margin-bot">
+                                        <div class="col s12 m6 value-description">
+                                            <div class="value-description">>> To stay open-minded and tolerant, willing to explore and consider new ideas</div>
+                                            <div class="value-description">>> Keeping your word and coming to the event once you have registered. The others are counting on you!</div>
+                                            >> To share experiences. Sharing is key to building strong relationships
+                                        </div>
+                                        <div class="col s12 m6 "><div style="overflow: hidden"><img src="/images/event_description.jpg"></div></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row section" id="comments-block">
+                            <div class="col s12 l12">
+                                <div class="section-title" >Discussion</div>
+
+
+                                <ul id="messages">
+                                        <li  class="message hide" id="message-template">
+                                            <div class="row">
+                                                <div class="col s3 m2 valign-wrapper">
+                                                    <span class="avatar avatar-block">
+                                                        <span class="commitment-avatar">
+                                                            <img class="flag" src="/images/flags-iso/flat/32/#native_country#.png" />
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                <div class="col s9 m10">
+                                                    <div class="valign user-name"><a href="" class="name"></a></div>
+                                                    <time class="timeago"></time>
+                                                    <br /><span class="private_message"></span>
+                                                    <div class="valign content"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    {% if isUserAuthenticated == true %}
+                                <div class="event-section">
+
+                                    <form id="form_message">
+                                        <div class="row no-margin-bot">
+                                            <div class="input-field col s12">
+                                                <textarea name="content" required class="validate materialize-textarea"></textarea>
+                                                <label for="content">Ask a question or write a comment</label>
+                                                <div class="card-panel error hide" id="message-error"></div>
+                                            </div>
+                                        </div>
+                                        {% if isCurrentUserRegistered %}
+                                            <input type="checkbox" id="private" name="private" class="filled-in" checked="checked"/>
+                                            <label for="private">Private (Show only to members registered to this event)</label>
+                                        {% endif %}
+                                        <div class="input-field">
+                                            <button type="submit" class="btn">Post <i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                                 {% endif %}
+
+                            </div>
+                        </div>
+
+                        <div class="row section" id="anchor-feedbacks">
+                            <div class="col s12 l12">
+                                <div class="section-title" >Feedback</div>
+                                <div class="event-section">
+                                    {% if event.startDateTimeUTC|date("U") < "now"|date("U") %}
+                                        <span id="loader-feedbacks">
+                                            <span >Loading feedback ...</span><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                                        </span>
+                                        <div class="hide" id="feedback-request">
+                                            <p>Leave a feedback</p>
+                                            <div class="row">
+                                                <span class="choice col s4 center"><a href="{{ path('event_feedback', {'eventId': event.id, 'rating':'bad'}) }}"><i class="fa fa-frown-o fa-2x" aria-hidden="true"></i></a></span>
+                                                <span class="choice col s4 center"><a href="{{ path('event_feedback', {'eventId': event.id, 'rating':'normal'}) }}"><i class="fa fa-meh-o fa-2x" aria-hidden="true"></i></a></span>
+                                                <span class="choice col s4 center"><a href="{{ path('event_feedback', {'eventId': event.id, 'rating':'good'}) }}"><i class="fa fa-smile-o fa-2x" aria-hidden="true"></i></a></span>
+                                            </div>
+                                        </div>
+                                        <div class="hide" id="no-feedback-message"><p>No feedback</p></div>
+                                        <ul id="feedbacks">
+                                            <li  class="feedback hide" id="feedback-template">
+                                                <div class="row">
+                                                    <div class="col s12">
+                                                        <span class="valign name"></span>
+                                                        <span class="valign rating"></span>
+                                                        <div class="valign content"></div>
+                                                        <time class="timeago"></time>
+
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    {% else %}
+                                        Feedback will be visible once the event has started.
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col l4 s12">
+                        <div class="section" id="anchor-participants">
+                        <div class="row">
+                        <div class="participant_title scrollspy section-title" >Who is coming?</div>
+                            {% if isCurrentUserRegistered %}
+                                <div class="event-section">
+                                {# % if isCurrentUserRegistered %}<br /><a href="#community_invite_module" class="btn modal-trigger">Add a participant</a>{% endif % #}
+                                    <a href="#event_invite_module" class="btn"  id="event_invitation-modal-trigger" data-event-id={{ event.id }}>Invite</a>
+                                </div>
+                            {% endif %}
+                            <div class="event-section">
+                            {{ eventUsers|length }} {% if eventUsers|length > 1 %}comeeters{% else %} comeeter{% endif %}{% if event.maximumCapacity != null %}, {{ event.maximumCapacity - eventUsers|length}} {% if (event.maximumCapacity - eventUsers|length) >1  %}spots{% else %}spot{% endif %} left{% endif %}
+
+                                <ul class="collection_participants">
+
+                        {% for eventUser in eventUsers %}
+                            {% if event.user.id == eventUser.user.id %}
+                                <li class="collection-item collection-title">Proposed by</li>
+                                <li  class="collection-item valign-wrapper owner">
+                                <span class="avatar-block">
+                                    <span class="commitment-avatar commitment-avatar-{{ eventUser.user.statistics.commitmentScore }}">
+                                       <img class="flag" src="/images/flags-iso/flat/32/{{ eventUser.user.profile.nativeCountry }}.png" />
+
+                                    </span>
+                                    <div class="stacked-bar-graph commitment level-{{ eventUser.user.statistics.commitmentScore }}">
+                                          <span style="width:20%" class="bar-1"></span>
+                                          <span style="width:20%" class="bar-2"></span>
+                                          <span style="width:20%" class="bar-3"></span>
+                                          <span style="width:20%" class="bar-4"></span>
+                                          <span style="width:20%" class="bar-5"></span>
+                                        </div>
+                                        <div class="stacked-bar-graph participation level-{{ eventUser.user.statistics.participationLevel }}">
+                                          <span style="width:25%" class="bar-1"></span>
+                                          <span style="width:25%" class="bar-2"></span>
+                                          <span style="width:25%" class="bar-3"></span>
+                                          <span style="width:25%" class="bar-4"></span>
+                                        </div>
+                                    </span>
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                        <span class="valign user-name-block">
+                                            <a class="user-name" href="{{ path('user_profile', {'userId': eventUser.user.id}) }}"> {{ eventUser.user.profile.firstName }}</a>
+                                            {% if eventUser.user.profile.motto is not empty %}<span class="event_user_motto" title="{{ eventUser.user.profile.motto }}">{{ eventUser.user.profile.motto }}</span>{% endif %}
+                                        </span>
+                                        {% if app.user.id != eventUser.user.id %}
+                                            <span class="main-actions">
+                                            {% if attribute(links, eventUser.user.id) is defined %}
+                                                <i class="small fa fa-user-circle-o" aria-hidden="true"></i>
+                                            {% else %}
+                                                <span class="fa-stack btn_connect" data-target-id="{{ eventUser.user.id }}" data-event-id="{{ event.id }}">
+                                                  <i class="small fa fa-user-plus" aria-hidden="true"></i>
+                                                </span>
+                                            {% endif %}
+                                            </span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="valign">
+                                            <span class="user-name"> {{ eventUser.user.profile.firstName }}</span>
+                                        </span>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                        <ul class="collection_participants">
+                        {% if eventUsers|length > 1 %}
+                            <li class="collection-item collection-title">Joined by</li>
+                        {% endif %}
+                        {% for eventUser in eventUsers %}
+                            {% if event.user.id != eventUser.user.id %}
+                                <li  class="collection-item valign-wrapper">
+                                <span class="avatar-block">
+                                    <span class="commitment-avatar commitment-avatar-{{ eventUser.user.statistics.commitmentScore }}">
+                                        <img class="flag" src="/images/flags-iso/flat/32/{{ eventUser.user.profile.nativeCountry }}.png" />
+                                    </span>
+                                    <div class="stacked-bar-graph commitment level-{{ eventUser.user.statistics.commitmentScore }}">
+                                          <span style="width:20%" class="bar-1"></span>
+                                          <span style="width:20%" class="bar-2"></span>
+                                          <span style="width:20%" class="bar-3"></span>
+                                          <span style="width:20%" class="bar-4"></span>
+                                          <span style="width:20%" class="bar-5"></span>
+                                        </div>
+                                        <div class="stacked-bar-graph participation level-{{ eventUser.user.statistics.participationLevel }}">
+                                          <span style="width:25%" class="bar-1"></span>
+                                          <span style="width:25%" class="bar-2"></span>
+                                          <span style="width:25%" class="bar-3"></span>
+                                          <span style="width:25%" class="bar-4"></span>
+                                        </div>
+                                    </span>
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                        <span class="valign user-name-block">
+                                            <a class="user-name" href="{{ path('user_profile', {'userId': eventUser.user.id}) }}"> {{ eventUser.user.profile.firstName }}</a>
+                                            {% if eventUser.user.profile.motto is not empty %}<span class="event_user_motto" title="{{ eventUser.user.profile.motto }}">{{ eventUser.user.profile.motto }}</span>{% endif %}
+                                        </span>
+                                        {% if app.user.id != eventUser.user.id %}
+                                            <span class="main-actions">
+                                            {% if attribute(links, eventUser.user.id) is defined %}
+                                                <i class="small fa fa-user-circle-o" aria-hidden="true"></i>
+                                            {% else %}
+                                                <span class="btn_connect" data-target-id="{{ eventUser.user.id }}" data-event-id="{{ event.id }}">
+                                                  <i class="small fa fa-user-plus" aria-hidden="true"></i>
+                                                </span>
+                                            {% endif %}
+                                            </span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="valign">
+                                            <span class="user-name"> {{ eventUser.user.profile.firstName }}</span>
+                                        </span>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    </div>
+                    </div>
+                {% endif %}
+            </div>
+    </div>
+    {% include "registration/community_invite.html.twig" with {'eventId': event.id} %}
+    {% include "registration/event_invite.html.twig" with {'eventId': event.id} %}
+    <div class="modal full" id="cancel-registration-modal">
+        <div class="row">
+            <div class="col s12 modal-content">
+                <div class="modal-title">Cancel my registration</div>
+
+                <p>Are you sure ?</p>
+
+                <p>Remember why you registered in the first place.<br />
+                    This event is going to be a moment of sharing and meeting people, you really don't wanna miss it :)</p>
+                <p><a data-event-id={{ event.id }} href="#" class="btn modal-close">I keep my word, I 'm still going!</a></p>
+                <p><a data-event-id={{ event.id }} href="#" class="cancel-registration-trigger">I really can't go. Sorry, I unregister</a></p>
+                </div>
+        </div>
+    </div>
+
+    <div class="modal  modal-fixed-footer" id="user-commitment-score-zero-reached-modal">
+        <div class="modal-content">
+                    <div class="modal-title">Your trust score is at 0</div>
+
+            <p>In order to protect the community, you are not able to join the other comeeters events. You will have to propose an event to the community.</p>
+                <p>If a participant joined you and the event ended well, you will earn 1 trust point and you will be able to join again the other comeeters events.
+            </p>
+
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">I understand</a>
+        </div>
+    </div>
+
+    <div class="modal" id="registration-to-public-event-limit-reached-modal">
+        <div class="modal-content">
+            <div class="modal-title">You have reach your monthly registration limit</div>
+
+            <p>If you want to join more event this period, please <a class="btn" href="{{ path('pricing') }}">upgrade your plan</a></p>
+
+        </div>
+    </div>
+
+    {% if isCurrentUserRegistered %}
+        <div id="modal-calendar" class="modal">
+            <div class="modal-content">
+                <div class="modal-title">Add to calendar</div>
+                {% set addToCalendarParameters = "e[0][date_start]="~event.startDateTime|date('Y-m-d H:i:s')|url_encode~"&e[0][date_end]="~event.startDateTime|date('Y-m-d H:i:s')|url_encode~"&e[0][timezone]=Europe%2FParis&e[0][title]="~event.title|url_encode~"&e[0][description]="~event.description|url_encode~"&e[0][location]="~event.address|url_encode~"&e[0][organizer]="~event.user.profile.firstName|url_encode~"&e[0][privacy]=public" %}
+
+                <ul class="collection">
+                    <li class="collection-item"><a id="fl_ical" href="http://addtocalendar.com/atc/ical?f=m&{{ addToCalendarParameters }}" target="_blank">iCalendar</a></li>
+                    <li class="collection-item"><a id="fl_google" href="http://addtocalendar.com/atc/google?f=m&{{ addToCalendarParameters }}" target="_blank">Google Calendar</a></li>
+                    <li class="collection-item"><a id="fl_outlook" href="http://addtocalendar.com/atc/outlook?f=m&{{ addToCalendarParameters }}" target="_blank">Outlook</a></li>
+                    <li class="collection-item"><a id="fl_outlookonline" href="http://addtocalendar.com/atc/outlookonline?f=m&{{ addToCalendarParameters }}" target="_blank">Outlook Online</a></li>
+                    <li class="collection-item"><a id="fl_yahoo" href="http://addtocalendar.com/atc/yahoo?f=m&{{ addToCalendarParameters }}" target="_blank">Yahoo! Calendar</a></li>
+                </ul>
+
+
+
+
+
+            </div>
+        </div>
+    {% endif %}
+
+    {% if(event is defined) %}
+        {% if isEventOwner is defined and isEventOwner %}
+            <ul id='event-dropdown' class='dropdown-content'>
+                    <li>
+                        <a href="{{ path('edit_event', {'eventId': event.id}) }}"><i class="fa fa-pencil-square-o fa-fw" aria-hidden="true"></i> Modify the event</a>
+                    </li>
+
+            </ul>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    'js/show_events.js'
+    'js/event_invite.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% if(errorCode is not defined) %}
+        <script>
+            var CREATE_EVENT_SUCCESS_URL_PATH = '/events/{eventId}';
+            var USER_PROFILE_URL_PATH = '/user/{userId}/profile';
+            var EVENT_ID = {{ event.id }};
+            var IS_CURRENT_USER_REGISTERED_TO_EVENT = {% if isCurrentUserRegistered %} true {% else %} false {% endif %};
+            var LOAD_FEEDBACKS = {% if event.startDateTimeUTC|date("U") < "now"|date("U") %}true{% else %}false{% endif %};
+        </script>
+    {% endif %}
+    <script>
+        var IS_CURRENT_USER_AUTHENTICATED = {% if isUserAuthenticated %} true {% else %} false {% endif %};
+    </script>
+{% endblock %}
